@@ -35,9 +35,10 @@ class MainMenuState extends MusicBeatState
 	var optionShit:Array<String> = [
 		'story_mode',
 		'freeplay',
-		#if ACHIEVEMENTS_ALLOWED 'awards', #end
+		//#if MODS_ALLOWED 'mods', #end
+		//#if ACHIEVEMENTS_ALLOWED 'awards', #end
 		'credits',
-		#if !switch 'donate', #end
+		//#if !switch 'donate', #end
 		'options'
 	];
 
@@ -45,7 +46,7 @@ class MainMenuState extends MusicBeatState
 	var camFollow:FlxObject;
 	var camFollowPos:FlxObject;
 	var debugKeys:Array<FlxKey>;
-
+    var char:FlxSprite;
 	override function create()
 	{
 		#if MODS_ALLOWED
@@ -64,8 +65,8 @@ class MainMenuState extends MusicBeatState
 		camAchievement.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
-		FlxG.cameras.add(camAchievement, false);
-		FlxG.cameras.setDefaultDrawTarget(camGame, true);
+		FlxG.cameras.add(camAchievement);
+		FlxCamera.defaultCameras = [camGame];
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -117,7 +118,8 @@ class MainMenuState extends MusicBeatState
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
 			menuItem.animation.play('idle');
 			menuItem.ID = i;
-			menuItem.screenCenter(X);
+			menuItem.x = 100;
+			//menuItem.screenCenter(X);
 			menuItems.add(menuItem);
 			var scr:Float = (optionShit.length - 4) * 0.135;
 			if(optionShit.length < 6) scr = 0;
@@ -155,11 +157,42 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
-		#if android
-		addVirtualPad(UP_DOWN, A_B);
-		#end
-
 		super.create();
+		
+		switch(FlxG.random.int(1, 3))
+		(
+            case 1:
+                char = new FlxSprite(820, 170).loadGraphic(Paths.image('mainmenu/Ezra'));//put your cords and image here
+                char.frames = Paths.getSparrowAtlas('mainmenu/Ezra');//here put the name of the xml
+                char.animation.addByPrefix('idleD', 'idle', 24, true);//on 'idle normal' change it to your xml one
+                char.animation.play('idleE');//you can rename the anim however you want to
+                char.scrollFactor.set();
+                FlxG.sound.play(Paths.sound('appear'), 2);
+                char.flipX = true;//this is for flipping it to look left instead of right you can make it however you want
+                char.antialiasing = ClientPrefs.globalAntialiasing;
+                add(char);
+
+				case 2:
+                char = new FlxSprite(820, 170).loadGraphic(Paths.image('mainmenu/Ayed'));//put your cords and image here
+                char.frames = Paths.getSparrowAtlas('mainmenu/Ayed');//here put the name of the xml
+                char.animation.addByPrefix('idleA', 'idle', 24, true);//on 'idle normal' change it to your xml one
+                char.animation.play('idleA');//you can rename the anim however you want to
+                char.scrollFactor.set();
+                FlxG.sound.play(Paths.sound('appear'), 2);
+                char.flipX = true;//this is for flipping it to look left instead of right you can make it however you want
+                add(char);
+
+				case 3:
+                char = new FlxSprite(820, 170).loadGraphic(Paths.image('mainmenu/DANIEL _BRIZ'));//put your cords and image here
+                char.frames = Paths.getSparrowAtlas('mainmenu/DANIEL _BRIZ');//here put the name of the xml
+                char.animation.addByPrefix('idleD', 'idle', 24, true);//on 'idle normal' change it to your xml one
+                char.animation.play('idleD');//you can rename the anim however you want to
+                char.scrollFactor.set();
+                FlxG.sound.play(Paths.sound('appear'), 2);
+                char.flipX = true;//this is for flipping it to look left instead of right you can make it however you want
+                add(char);
+		)
+
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
@@ -258,18 +291,20 @@ class MainMenuState extends MusicBeatState
 					});
 				}
 			}
+			#if desktop
 			else if (FlxG.keys.anyJustPressed(debugKeys))
 			{
 				selectedSomethin = true;
 				MusicBeatState.switchState(new MasterEditorMenu());
 			}
+			#end
 		}
 
 		super.update(elapsed);
 
 		menuItems.forEach(function(spr:FlxSprite)
 		{
-			spr.screenCenter(X);
+			//spr.screenCenter(X);
 		});
 	}
 
